@@ -7,11 +7,12 @@ CONFIG_FILE="config.hcl"
 WORKERS_JSON=$(boundary workers list -format=json)
 
 # Extract the addresses from the JSON output
-ADDRESSES=$(echo $WORKERS_JSON | jq -r '.items[].address')
+ADDRESSES=$(echo "$WORKERS_JSON" | jq -r '.items[].address')
 
 # Create the initial_upstream array for the config.hcl
 INITIAL_UPSTREAM="initial_upstream = ["
 for ADDRESS in $ADDRESSES; do
+    ADDRESS=$(echo $ADDRESS | sed 's/:9202//')
     INITIAL_UPSTREAM+="\"$ADDRESS\", "
 done
 
